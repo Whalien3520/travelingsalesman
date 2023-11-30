@@ -1,5 +1,6 @@
 #include "priorityQueue.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 // adapted from https://www.geeksforgeeks.org/c-program-to-implement-min-heap/
 
@@ -13,6 +14,7 @@ priorityQueue* newPriorityQueue()
     }
     ret->size = 0;
     ret->cap = 0;
+    return ret;
 }
 void addpriorityQueue(priorityQueue* pq, node* n)
 {
@@ -61,7 +63,7 @@ void priorityQueueHelper(priorityQueue* pq, int ind)
     int parent = (ind - 1 ) / 2;
     if(pq->arr[parent]->lowerBound > pq->arr[ind]->lowerBound)
     {
-        int temp = pq->arr[parent];
+        node* temp = pq->arr[parent];
         pq->arr[parent] = pq->arr[ind];
         pq->arr[ind] = temp;
 
@@ -83,8 +85,8 @@ node* pollPriorityQueue(priorityQueue* pq)
     node* ret = pq->arr[0];
     pq->arr[0] = pq->arr[pq->size - 1];
     pq->size--;
-
-
+    minHeapify(pq, 0);
+    return ret;
 }
 void minHeapify(priorityQueue* pq, int ind)
 {
@@ -115,9 +117,11 @@ node* peekPriorityQUeue(priorityQueue* pq)
 }
 void freePriorityQueue(priorityQueue* pq)
 {
+    printf("pq size: %d\n", pq->size);
     int i;
     for(i = 0; i < pq->size; i++)
     {
+	printf("%d\n", i);
         freeNode(pq->arr[i]);
     }
     free(pq->arr);

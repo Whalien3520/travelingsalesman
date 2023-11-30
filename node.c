@@ -85,7 +85,7 @@ void reduceScratch(node* node)
     for(i = 0; i < node->includedChains->size; i++)
     {
         intArrayList* includedChain = node->includedChains->arr[i];
-        for(j = 0; j < node->includedChains->size - 1; j++)
+        for(j = 0; j < includedChain->size - 1; j++)
         {
             node->lowerBound += (node->matrix)[includedChain->arr[j][0]][includedChain->arr[j + 1][0]];
             for(k = 0; k < node->n; k++)
@@ -99,7 +99,7 @@ void reduceScratch(node* node)
     {
         node->matrix[node->excludedPairs->arr[i][0]][node->excludedPairs->arr[i][1]] = -1;
     }
-
+    //printf("Checkpoint!\n");
     for(i = 0; i < node->n; i++)
     {
         int min = INT_MAX;
@@ -107,7 +107,7 @@ void reduceScratch(node* node)
         {
             if(node->matrix[i][j] == -1)
                 continue;
-            min = fmin(min, node->matrix[i][j]);
+            min = minInts(min, node->matrix[i][j]);
             if(min == 0)
                 break;
         }
@@ -128,7 +128,7 @@ void reduceScratch(node* node)
         {
             if(node->matrix[j][i] == -1)
                 continue;
-            min = fmin(min, node->matrix[j][i]);
+            min = minInts(min, node->matrix[j][i]);
             if(min == 0)
                 break;
         }
@@ -153,7 +153,7 @@ void reduceTake(node* node, intArrayList* rows, intArrayList* cols)
         {
             if(node->matrix[rows->arr[r][0]][c] == -1)
                 continue;
-            min = fmin(min, node->matrix[rows->arr[r][0]][c]);
+            min = minInts(min, node->matrix[rows->arr[r][0]][c]);
             if(min == 0)
                 break;
         }
@@ -174,7 +174,7 @@ void reduceTake(node* node, intArrayList* rows, intArrayList* cols)
         {
             if(node->matrix[r][cols->arr[c][0]] == -1)
                 continue;
-            min = fmin(min, node->matrix[r][cols->arr[c][0]]);
+            min = minInts(min, node->matrix[r][cols->arr[c][0]]);
             if(min == 0)
                 break;
         }
@@ -218,9 +218,9 @@ int getMinExclude(int** matrix, int n, int x, int y)
     for(i = 0; i < n; i++)
     {
         if(matrix[x][i] > -1 && i != y)
-            rmax = fmin(rmax, matrix[x][i]);
+            rmax = minInts(rmax, matrix[x][i]);
         if(matrix[i][y] > -1 && i != x)
-            cmax = fmin(cmax, matrix[i][y]);
+            cmax = minInts(cmax, matrix[i][y]);
     }
     return rmax + cmax;
 }
@@ -245,27 +245,33 @@ void commit(node* node, int x, int y)
             arr[0] = i;
             addIntArrayList(reduceCols, arr, reduceCols->size);
         }
-        int* reduceCandidates = removeCycle(node, x, y);
-        if(reduceCandidates[0] > -1)
-        {
-            int* arrx = (int*)malloc(sizeof(int));
-            arrx[0] = reduceCandidates[0];
-            addIntArrayList(reduceRows, arrx, reduceRows->size);
-            int* arry = (int*)malloc(sizeof(int));
-            arry[0] = reduceCandidates[1];
-            addIntArrayList(reduceCols, arry, reduceCols->size);
-        }
-        reduceTake(node, reduceRows, reduceCols);
-        freeIntArrayList(reduceRows);
-        freeIntArrayList(reduceCols);
+        node->matrix[i][y] = -1;
     }
+    //printf("Checkpoint1\n");
+    int* reduceCandidates = removeCycle(node, x, y);
+    //printf("Checkpoint2\n");
+    if(reduceCandidates[0] > -1)
+    {
+        int* arrx = (int*)malloc(sizeof(int));
+        arrx[0] = reduceCandidates[0];
+        addIntArrayList(reduceRows, arrx, reduceRows->size);
+        int* arry = (int*)malloc(sizeof(int));
+        arry[0] = reduceCandidates[1];
+        addIntArrayList(reduceCols, arry, reduceCols->size);
+    }
+    free(reduceCandidates);
+    reduceTake(node, reduceRows, reduceCols);
+    freeIntArrayList(reduceRows);
+    freeIntArrayList(reduceCols);
 }
 // RETURN NEEDS TO BE FREED
 int* removeCycle(node* node, int x, int y)
 {
     int tailX = -1, headY = -1;
-    int matX, matY;
+    int matX = -1, matY = -1;
     int* ret = (int*)malloc(2 * sizeof(int));
+    ret[0] = -1;
+    ret[1] = -1;
     int i;
     for(i = 0; i < node->includedChains->size; i++)
     {
@@ -278,15 +284,24 @@ int* removeCycle(node* node, int x, int y)
     {
         if(headY > -1)
         {
+		//printf("Flag1\n");
             intArrayList* temp = removeListArrayList(node->includedChains, headY);
             intArrayList* listX = node->includedChains->arr[headY < tailX ? tailX - 1 : tailX];
             int j;
-            for(j = temp->size; j >= 0; j--)
+		//printf("Flag2\n");
+            for(j = temp->size - 1; j >= 0; j--)
             {
-                addIntArrayList(listX, removeIntArrayList(temp, j), listX->size);
-                matX = listX->arr[listX->size - 1][0];
-                matY = listX->arr[0][0];
+		//printf("Flag3\n");
+		if(temp == NULL || listX == NULL)
+			printf("FLAG FLAG FLAG\n");
+                addIntArrayList(listX, removeIntArrayList(temp, 0), listX->size);
+		//printf("Flag4\n");
             }
+            matX = listX->arr[listX->size - 1][0];
+            matY = listX->arr[0][0];
+		//printf("Flag5\n");
+	    freeIntArrayList(temp);
+		//printf("Flag6\n");
         }
         else
         {
@@ -319,6 +334,11 @@ int* removeCycle(node* node, int x, int y)
             matX = y;
             matY = x;
         }
+    }
+    if(matX == -1 || matY == -1)
+    {
+        printf("matX or matY was never changed from -1");
+        exit(1);
     }
     if(node->matrix[matX][matY] == 0)
     {

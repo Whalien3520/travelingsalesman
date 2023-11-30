@@ -45,7 +45,8 @@ void addIntArrayList(intArrayList* list, int* entry, int index)
             }
             list->cap = 2 * list->cap;
         }
-        memmove(&(list->arr[index + 1]), &(list->arr[index]), (list->size - index) * sizeof(int*));
+        if(index < list->size)
+            memmove(&(list->arr[index + 1]), &(list->arr[index]), (list->size - index) * sizeof(int*));
         list->arr[index] = entry;
         list->size += 1;
     }
@@ -69,6 +70,7 @@ int* removeIntArrayList(intArrayList* list, int index)
     }
     int* ret = list->arr[index];
     memmove(&(list->arr[index]), &(list->arr[index + 1]), (list->size - index - 1) * sizeof(int*));
+    list->size--;
     return ret;
 }
 intArrayList* newIntArrayList()

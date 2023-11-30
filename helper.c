@@ -1,6 +1,6 @@
 #include "helper.h"
 
-int fmin(int a, int b)
+int minInts(int a, int b)
 {
 	return (a > b) ? b : a;
 }

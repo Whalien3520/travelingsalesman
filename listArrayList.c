@@ -70,9 +70,10 @@ intArrayList* removeListArrayList(listArrayList* list, int index)
     }
     intArrayList* ret = list->arr[index];
     memmove(&(list->arr[index]), &(list->arr[index + 1]), (list->size - index - 1) * sizeof(intArrayList*));
+    list->size--;
     return ret;
 }
-void freelistArrayList(listArrayList* list)
+void freeListArrayList(listArrayList* list)
 {
     if(list == NULL)
     {
@@ -85,7 +86,7 @@ void freelistArrayList(listArrayList* list)
     free(list->arr);
     free(list);
 }
-listArrayList* newlistArrayList()
+listArrayList* newListArrayList()
 {
     listArrayList *ret = (listArrayList*)malloc(sizeof(listArrayList));
     if(ret == NULL)
