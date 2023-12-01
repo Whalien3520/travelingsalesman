@@ -5,6 +5,7 @@ CFLAGS = -Wall -g
 all: $(PROGRAMS)
 clean:
 	rm -f *.o
+	rm $(PROGRAMS)
 # C compilations
 helper.o: helper.c helper.h
 	$(CC) $(CFLAGS) -c helper.c

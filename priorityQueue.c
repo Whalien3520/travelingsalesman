@@ -98,7 +98,7 @@ void minHeapify(priorityQueue* pq, int ind)
 
     if(l != -1 && pq->arr[l]->lowerBound < pq->arr[ind]->lowerBound)
         min = l;
-    if(r != -1 && pq->arr[r]->lowerBound < pq->arr[ind]->lowerBound)
+    if(r != -1 && pq->arr[r]->lowerBound < pq->arr[min]->lowerBound)
         min = r;
     
     if(min != ind)

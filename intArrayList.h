@@ -8,7 +8,8 @@ typedef struct intArrayList
 } intArrayList;
 
 void addIntArrayList(intArrayList* list, int* entry, int index);
-int* removeIntArrayList(intArrayList* list, int index);
+void removeIntArrayList(intArrayList* list, int index);
+int* getIntArrayList(intArrayList* list, int ind);
 void freeIntArrayList(intArrayList* list);
 intArrayList* newIntArrayList();
 

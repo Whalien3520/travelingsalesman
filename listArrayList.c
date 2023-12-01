@@ -51,7 +51,7 @@ void addListArrayList(listArrayList* list, intArrayList* entry, int index)
         list->size += 1;
     }
 }
-intArrayList* removeListArrayList(listArrayList* list, int index)
+void removeListArrayList(listArrayList* list, int index)
 {
     if(list == NULL)
     {
@@ -68,10 +68,22 @@ intArrayList* removeListArrayList(listArrayList* list, int index)
         printf("Attempted to remove from outside listArrayList bounds\n");
         exit(1);
     }
-    intArrayList* ret = list->arr[index];
     memmove(&(list->arr[index]), &(list->arr[index + 1]), (list->size - index - 1) * sizeof(intArrayList*));
     list->size--;
-    return ret;
+}
+intArrayList* getListArrayList(listArrayList* list, int ind)
+{
+    if(list == NULL)
+    {
+        printf("Attempted to get from null listArrayList\n");
+        exit(1);
+    }
+    if(ind < 0 || ind >= list->size)
+    {
+        printf("Attempted to get from outside listArrayList bounds\n");
+        exit(1);
+    }
+    return list->arr[ind];
 }
 void freeListArrayList(listArrayList* list)
 {

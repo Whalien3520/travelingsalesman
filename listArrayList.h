@@ -10,7 +10,8 @@ typedef struct listArrayList
 } listArrayList;
 
 void addListArrayList(listArrayList* list, intArrayList* entry, int index);
-intArrayList* removeListArrayList(listArrayList* list, int index);
+void removeListArrayList(listArrayList* list, int index);
+intArrayList* getListArrayList(listArrayList* list, int ind);
 void freeListArrayList(listArrayList* list);
 listArrayList* newListArrayList();
 
