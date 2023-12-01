@@ -96,5 +96,6 @@ listArrayList* newListArrayList()
     }
     ret->cap = 0;
     ret->size = 0;
+    ret->arr = NULL;
     return ret;
 }

@@ -1,6 +1,7 @@
 #include "node.h"
 #include "helper.h"
 #include "listArrayList.h"
+#include "intArrayList.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,7 +32,11 @@ node* avoidNode(node* parent, int excludeCoords[2], int** matrix)
         intArrayList* temp = newIntArrayList();
         int j;
         for(j = 0; j < parent->includedChains->arr[i]->size; j++)
-            addIntArrayList(temp, parent->includedChains->arr[i]->arr[j], j);
+        {
+            int* arr = (int*)malloc(sizeof(int));
+            arr[0] = parent->includedChains->arr[i]->arr[j][0];
+            addIntArrayList(temp, arr, j);
+        }
         addListArrayList(ret->includedChains, temp, i);
     }
 
@@ -180,6 +185,7 @@ void reduceTake(node* node, intArrayList* rows, intArrayList* cols)
         }
         if(min == 0 || min == INT_MAX)
             continue;
+        node->lowerBound += min;
         for(r = 0; r < node->n; r++)
         {
             if(node->matrix[r][cols->arr[c][0]] == -1)
@@ -213,7 +219,7 @@ int* getEdge(int** matrix, int n)
 }
 int getMinExclude(int** matrix, int n, int x, int y)
 {
-    int rmax = 0, cmax = 0;
+    int rmax = INT_MAX, cmax = INT_MAX;
     int i;
     for(i = 0; i < n; i++)
     {
@@ -285,23 +291,26 @@ int* removeCycle(node* node, int x, int y)
         if(headY > -1)
         {
 		//printf("Flag1\n");
+            intArrayList* listX = node->includedChains->arr[tailX];
             intArrayList* temp = removeListArrayList(node->includedChains, headY);
-            intArrayList* listX = node->includedChains->arr[headY < tailX ? tailX - 1 : tailX];
+            if(temp == NULL || listX == NULL)
+            {
+                printf("lists were null while joining for removeCycle");
+                exit(1);
+            }
             int j;
 		//printf("Flag2\n");
-            for(j = temp->size - 1; j >= 0; j--)
+            //for(j = temp->size - 1; j >= 0; j--)
+            while(temp->size > 0)
             {
-		//printf("Flag3\n");
-		if(temp == NULL || listX == NULL)
-			printf("FLAG FLAG FLAG\n");
+                for(j = 0; j < temp->size; j++)
+                    printf("%d\t", temp->arr[j][0]);
+                printf("\n");
                 addIntArrayList(listX, removeIntArrayList(temp, 0), listX->size);
-		//printf("Flag4\n");
             }
             matX = listX->arr[listX->size - 1][0];
             matY = listX->arr[0][0];
-		//printf("Flag5\n");
 	    freeIntArrayList(temp);
-		//printf("Flag6\n");
         }
         else
         {

@@ -117,11 +117,11 @@ node* peekPriorityQUeue(priorityQueue* pq)
 }
 void freePriorityQueue(priorityQueue* pq)
 {
-    printf("pq size: %d\n", pq->size);
+    //printf("pq size: %d\n", pq->size);
     int i;
     for(i = 0; i < pq->size; i++)
     {
-	printf("%d\n", i);
+	//printf("%d\n", i);
         freeNode(pq->arr[i]);
     }
     free(pq->arr);

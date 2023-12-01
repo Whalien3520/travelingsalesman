@@ -70,7 +70,7 @@ int* removeIntArrayList(intArrayList* list, int index)
     }
     int* ret = list->arr[index];
     memmove(&(list->arr[index]), &(list->arr[index + 1]), (list->size - index - 1) * sizeof(int*));
-    list->size--;
+    list->size -= 1;
     return ret;
 }
 intArrayList* newIntArrayList()
@@ -83,6 +83,7 @@ intArrayList* newIntArrayList()
     }
     ret->cap = 0;
     ret->size = 0;
+    ret->arr = NULL;
     return ret;
 }
 void freeIntArrayList(intArrayList* list)
@@ -94,7 +95,11 @@ void freeIntArrayList(intArrayList* list)
     }
     int i;
     for(i = 0; i < list->size; i++)
+    {
+        //printf("\t%d\n", i);
         free(list->arr[i]);
-    free(list->arr);
+    }
+    if(list->arr != NULL)
+        free(list->arr);
     free(list);
 }
